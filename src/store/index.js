@@ -4,34 +4,40 @@ const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
 
 export default createStore({
   state: {
-    posts: [],
-    currentPage: 1,
-    pageSize: 10,
-    nextId: 101, // Initial value for the next ID
+    posts: [],           // Holds the list of posts
+    currentPage: 1,     // Holds the current page number for pagination
+    pageSize: 10,       // Holds the number of posts per page
+    nextId: 101,        // Initial value for the next ID
   },
   getters: {
     paginatedPosts: (state) => {
+      // Retrieves the posts for the current page
       const startIndex = (state.currentPage - 1) * state.pageSize;
       const endIndex = startIndex + state.pageSize;
       return state.posts.slice(startIndex, endIndex);
     },
-    totalPages: (state) => Math.ceil(state.posts.length / state.pageSize),
+    totalPages: (state) => Math.ceil(state.posts.length / state.pageSize), // Calculates the total number of pages based on the number of posts
   },
   mutations: {
     SET_POSTS(state, posts) {
+      // Updates the state with the fetched posts
       state.posts = posts;
     },
     SET_CURRENT_PAGE(state, page) {
+      // Updates the current page number
       state.currentPage = page;
     },
     ADD_POST(state, post) {
+      // Adds a new post to the state and increments the nextId value
       state.posts.push(post);
-      state.nextId++; // Increment the nextId value
+      state.nextId++;
     },
     DELETE_POST(state, postId) {
+      // Removes a post from the state based on its ID
       state.posts = state.posts.filter((post) => post.id !== postId);
     },
     UPDATE_POST(state, updatedPost) {
+      // Updates a post in the state with the modified post object
       const index = state.posts.findIndex((post) => post.id === updatedPost.id);
       if (index !== -1) {
         state.posts.splice(index, 1, updatedPost);
@@ -40,6 +46,7 @@ export default createStore({
   },
   actions: {
     async fetchPosts({ commit }) {
+      // Fetches the posts from the API and commits them to the state
       try {
         const response = await fetch(`${API_BASE_URL}/posts`);
         const posts = await response.json();
@@ -49,6 +56,7 @@ export default createStore({
       }
     },
     async createPost({ commit, state }, newPost) {
+      // Creates a new post and adds it to the state
       try {
         const response = await fetch(`${API_BASE_URL}/posts`, {
           method: 'POST',
@@ -63,6 +71,7 @@ export default createStore({
       }
     },
     async deletePost({ commit }, postId) {
+      // Deletes a post from the API and removes it from the state
       try {
         await fetch(`${API_BASE_URL}/posts/${postId}`, {
           method: 'DELETE',
@@ -73,6 +82,7 @@ export default createStore({
       }
     },
     async updatePost({ commit }, updatedPost) {
+      // Updates a post in the API and updates it in the state
       try {
         await fetch(`${API_BASE_URL}/posts/${updatedPost.id}`, {
           method: 'PUT',
@@ -85,6 +95,7 @@ export default createStore({
       }
     },
     setCurrentPage({ commit }, page) {
+      // Sets the current page number
       commit('SET_CURRENT_PAGE', page);
     },
   },
