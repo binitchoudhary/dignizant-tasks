@@ -212,7 +212,9 @@ export default {
   padding: 0 1.5rem;
   text-align: left !important;
 }
-
+button{
+  cursor: pointer;
+}
 /* Styles for table header row */
 .thead {
   border: 1px solid black;
